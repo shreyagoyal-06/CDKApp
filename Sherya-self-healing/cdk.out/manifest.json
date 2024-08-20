@@ -1,0 +1,192 @@
+{
+  "version": "36.0.0",
+  "artifacts": {
+    "assembly-self-healing-code-app-dev-us-west-2-deploy": {
+      "type": "cdk:cloud-assembly",
+      "properties": {
+        "directoryName": "assembly-self-healing-code-app-dev-us-west-2-deploy",
+        "displayName": "self-healing-code-app/dev-us-west-2-deploy"
+      }
+    },
+    "self-healing-code-app.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "self-healing-code-app.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "self-healing-code-app": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://913524913171/us-west-2",
+      "properties": {
+        "templateFile": "self-healing-code-app.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::913524913171:role/cdk-hnb659fds-deploy-role-913524913171-us-west-2",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::913524913171:role/cdk-hnb659fds-cfn-exec-role-913524913171-us-west-2",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-913524913171-us-west-2/78f873041a3d656902c0237eb830d0f27cf503e1ad848954ddb59a15e4d073c3.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "self-healing-code-app.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::913524913171:role/cdk-hnb659fds-lookup-role-913524913171-us-west-2",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "self-healing-code-app.assets"
+      ],
+      "metadata": {
+        "/self-healing-code-app/self-heal-app/Pipeline/ArtifactsBucketEncryptionKey/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappPipelineArtifactsBucketEncryptionKeyBD52AC63"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/Pipeline/ArtifactsBucketEncryptionKeyAlias/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappPipelineArtifactsBucketEncryptionKeyAliasDAD19AC7"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/Pipeline/ArtifactsBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappPipelineArtifactsBucket59435B08"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/Pipeline/ArtifactsBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappPipelineArtifactsBucketPolicy9C75ADF5"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/Pipeline/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappPipelineRole718C30C4"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/Pipeline/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappPipelineRoleDefaultPolicy8A3F5FF2"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/Pipeline/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappPipeline7612F613"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/Pipeline/Source/shreyagoyal-06_CDKApp/CodePipelineActionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappPipelineSourceshreyagoyal06CDKAppCodePipelineActionRoleA1239553"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/Pipeline/Source/shreyagoyal-06_CDKApp/CodePipelineActionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappPipelineSourceshreyagoyal06CDKAppCodePipelineActionRoleDefaultPolicy6652E904"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/Pipeline/Build/Synth/CdkBuildProject/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappPipelineBuildSynthCdkBuildProjectRole3B0C089F"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/Pipeline/Build/Synth/CdkBuildProject/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappPipelineBuildSynthCdkBuildProjectRoleDefaultPolicyF9B4C685"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/Pipeline/Build/Synth/CdkBuildProject/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappPipelineBuildSynthCdkBuildProject009ABCDA"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/CodeBuildActionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappCodeBuildActionRoleC2940E07"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/CodeBuildActionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappCodeBuildActionRoleDefaultPolicy2358BE39"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/UpdatePipeline/SelfMutation/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappUpdatePipelineSelfMutationRole453932D8"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/UpdatePipeline/SelfMutation/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappUpdatePipelineSelfMutationRoleDefaultPolicy2E83B826"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/UpdatePipeline/SelfMutation/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappUpdatePipelineSelfMutation1DC5169A"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/Assets/FileRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappAssetsFileRole4F66FAF0"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/Assets/FileRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappAssetsFileRoleDefaultPolicyE48BF257"
+          }
+        ],
+        "/self-healing-code-app/self-heal-app/Assets/FileAsset1/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "selfhealappAssetsFileAsset1C3FB4C5E"
+          }
+        ],
+        "/self-healing-code-app/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/self-healing-code-app/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/self-healing-code-app/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "self-healing-code-app"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

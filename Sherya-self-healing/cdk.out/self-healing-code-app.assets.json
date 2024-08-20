@@ -1,0 +1,20 @@
+{
+  "version": "36.0.0",
+  "files": {
+    "78f873041a3d656902c0237eb830d0f27cf503e1ad848954ddb59a15e4d073c3": {
+      "source": {
+        "path": "self-healing-code-app.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "913524913171-us-west-2": {
+          "bucketName": "cdk-hnb659fds-assets-913524913171-us-west-2",
+          "objectKey": "78f873041a3d656902c0237eb830d0f27cf503e1ad848954ddb59a15e4d073c3.json",
+          "region": "us-west-2",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::913524913171:role/cdk-hnb659fds-file-publishing-role-913524913171-us-west-2"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

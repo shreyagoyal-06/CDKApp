@@ -1,0 +1,422 @@
+{
+ "Resources": {
+  "LambdaRole3A44B857": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonS3FullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonTextractFullAccess"
+       ]
+      ]
+     }
+    ],
+    "Policies": [
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": "secretsmanager:GetSecretValue",
+         "Effect": "Allow",
+         "Resource": "*"
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "inline_policies_key"
+     }
+    ],
+    "RoleName": "lambda-execute-role-prod-us-west-2"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/prod-us-west-2-deploy/ocr-api-gateway-stack-us-west-2/LambdaRole/Resource"
+   }
+  },
+  "lambdaocrfunctionA9B3C0C6": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-654654539034-us-west-2",
+     "S3Key": "56fa70fb76952897a145a2f9d4ef7a2193319b0e3886cb4850f6d0bd4824dd39.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "environment_type": "prod"
+     }
+    },
+    "FunctionName": "ocr-textract-api-prod-us-west-2",
+    "Handler": "lambda_function.lambda_handler",
+    "Layers": [
+     "arn:aws:lambda:us-west-2:770693421928:layer:Klayers-p311-arm64-Pillow:3",
+     "arn:aws:lambda:us-west-2:533267166026:layer:PyMuPDF:2",
+     "arn:aws:lambda:us-west-2:770693421928:layer:Klayers-p311-arm64-boto3:8",
+     "arn:aws:lambda:us-west-2:770693421928:layer:Klayers-p311-arm64-requests:6"
+    ],
+    "MemorySize": 3008,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaRole3A44B857",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11",
+    "Timeout": 120
+   },
+   "DependsOn": [
+    "LambdaRole3A44B857"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/prod-us-west-2-deploy/ocr-api-gateway-stack-us-west-2/lambda_ocr_function/Resource",
+    "aws:asset:path": "..\\asset.56fa70fb76952897a145a2f9d4ef7a2193319b0e3886cb4850f6d0bd4824dd39",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "OcrApiGatewayprod0AC3FDA3": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "ApiKeySourceType": "HEADER",
+    "DisableExecuteApiEndpoint": false,
+    "Name": "OcrApiGateway-prod"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/prod-us-west-2-deploy/ocr-api-gateway-stack-us-west-2/OcrApiGateway-prod/Resource"
+   }
+  },
+  "OcrApiGatewayprodDeployment33369F5A97b2de94d6510f46f9c24e2e2936ce9f": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Automatically created by the RestApi construct",
+    "RestApiId": {
+     "Ref": "OcrApiGatewayprod0AC3FDA3"
+    }
+   },
+   "DependsOn": [
+    "OcrApiGatewayproduploadPOSTCEB3E385",
+    "OcrApiGatewayprodupload19EE4A56"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/prod-us-west-2-deploy/ocr-api-gateway-stack-us-west-2/OcrApiGateway-prod/Deployment/Resource"
+   }
+  },
+  "OcrApiGatewayprodDeploymentStageprodBF0BACFF": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "OcrApiGatewayprodDeployment33369F5A97b2de94d6510f46f9c24e2e2936ce9f"
+    },
+    "RestApiId": {
+     "Ref": "OcrApiGatewayprod0AC3FDA3"
+    },
+    "StageName": "prod"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/prod-us-west-2-deploy/ocr-api-gateway-stack-us-west-2/OcrApiGateway-prod/DeploymentStage.prod/Resource"
+   }
+  },
+  "OcrApiGatewayprodupload19EE4A56": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "OcrApiGatewayprod0AC3FDA3",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "upload",
+    "RestApiId": {
+     "Ref": "OcrApiGatewayprod0AC3FDA3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/prod-us-west-2-deploy/ocr-api-gateway-stack-us-west-2/OcrApiGateway-prod/Default/upload/Resource"
+   }
+  },
+  "OcrApiGatewayproduploadPOSTApiPermissionEczPipelineproduswest2deployocrapigatewaystackuswest2OcrApiGatewayprodA0B6FA1BPOSTupload33EAF1EE": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "lambdaocrfunctionA9B3C0C6",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-west-2:654654539034:",
+       {
+        "Ref": "OcrApiGatewayprod0AC3FDA3"
+       },
+       "/",
+       {
+        "Ref": "OcrApiGatewayprodDeploymentStageprodBF0BACFF"
+       },
+       "/POST/upload"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/prod-us-west-2-deploy/ocr-api-gateway-stack-us-west-2/OcrApiGateway-prod/Default/upload/POST/ApiPermission.EczPipelineproduswest2deployocrapigatewaystackuswest2OcrApiGatewayprodA0B6FA1B.POST..upload"
+   }
+  },
+  "OcrApiGatewayproduploadPOSTApiPermissionTestEczPipelineproduswest2deployocrapigatewaystackuswest2OcrApiGatewayprodA0B6FA1BPOSTupload289EE785": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "lambdaocrfunctionA9B3C0C6",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-west-2:654654539034:",
+       {
+        "Ref": "OcrApiGatewayprod0AC3FDA3"
+       },
+       "/test-invoke-stage/POST/upload"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/prod-us-west-2-deploy/ocr-api-gateway-stack-us-west-2/OcrApiGateway-prod/Default/upload/POST/ApiPermission.Test.EczPipelineproduswest2deployocrapigatewaystackuswest2OcrApiGatewayprodA0B6FA1B.POST..upload"
+   }
+  },
+  "OcrApiGatewayproduploadPOSTCEB3E385": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": true,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "lambdaocrfunctionA9B3C0C6",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "OcrApiGatewayprodupload19EE4A56"
+    },
+    "RestApiId": {
+     "Ref": "OcrApiGatewayprod0AC3FDA3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/prod-us-west-2-deploy/ocr-api-gateway-stack-us-west-2/OcrApiGateway-prod/Default/upload/POST/Resource"
+   }
+  },
+  "OcrApiGatewayprodUsagePlanC26FDA77": {
+   "Type": "AWS::ApiGateway::UsagePlan",
+   "Properties": {
+    "ApiStages": [
+     {
+      "ApiId": {
+       "Ref": "OcrApiGatewayprod0AC3FDA3"
+      },
+      "Stage": {
+       "Ref": "OcrApiGatewayprodDeploymentStageprodBF0BACFF"
+      },
+      "Throttle": {}
+     }
+    ],
+    "UsagePlanName": "ocr-usage-plan-prod"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/prod-us-west-2-deploy/ocr-api-gateway-stack-us-west-2/OcrApiGateway-prod/Usage Plan/Resource"
+   }
+  },
+  "OcrApiGatewayprodUsagePlanUsagePlanKeyResourceEczPipelineproduswest2deployocrapigatewaystackuswest2ExistingApiKey5426F282C2DE3278": {
+   "Type": "AWS::ApiGateway::UsagePlanKey",
+   "Properties": {
+    "KeyId": {
+     "Ref": "SsmParameterValueapigatewayapikeyidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "KeyType": "API_KEY",
+    "UsagePlanId": {
+     "Ref": "OcrApiGatewayprodUsagePlanC26FDA77"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/prod-us-west-2-deploy/ocr-api-gateway-stack-us-west-2/OcrApiGateway-prod/Usage Plan/UsagePlanKeyResource:EczPipelineproduswest2deployocrapigatewaystackuswest2ExistingApiKey5426F282"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/22PzW6DMBCEnyV34zYhh16TVr1UVRFRz9EGtmSLfxC7FkKId69sqMqhp/lmLc2MD3p/fNKPOxg4q+o2M3TT00WgahUMfJ0IrJ5Kb1A9f7moszJgbzXo6TW4Ssi7+LLlAntLzOTdrDi/AjMK61MUxbk+h6pFOQOjgo4aEBxg1FOJLKeOUs2KL9gZP1p0Eq8bdxFo0qAFSmQf+gpT5q9ZgxZ+R7n7Op5W+mRosDCQBv9v3nCc57+4tD/2kWvSL6EHi4J9NB9BuiDbylkVo9y9e8j1/qCPu28myvrghCzqctEfxGVqj3wBAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/prod-us-west-2-deploy/ocr-api-gateway-stack-us-west-2/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "SsmParameterValueapigatewayapikeyidC96584B6F00A464EAD1953AFF4B05118Parameter": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/api_gateway/api_key_id"
+  },
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Outputs": {
+  "OcrApiGatewayprodEndpoint4ACDB1E0": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "OcrApiGatewayprod0AC3FDA3"
+      },
+      ".execute-api.us-west-2.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "OcrApiGatewayprodDeploymentStageprodBF0BACFF"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "LambdaFunctionName": {
+   "Description": "The name of the Lambda function",
+   "Value": {
+    "Ref": "lambdaocrfunctionA9B3C0C6"
+   }
+  },
+  "DeploymentRegion": {
+   "Description": "The region where this stack is deployed",
+   "Value": "us-west-2"
+  },
+  "ApiGatewayUrl": {
+   "Description": "The URL of the API Gateway",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "OcrApiGatewayprod0AC3FDA3"
+      },
+      ".execute-api.us-west-2.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "OcrApiGatewayprodDeploymentStageprodBF0BACFF"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "ApiKeyId": {
+   "Description": "The ID of the API key",
+   "Value": {
+    "Ref": "SsmParameterValueapigatewayapikeyidC96584B6F00A464EAD1953AFF4B05118Parameter"
+   }
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

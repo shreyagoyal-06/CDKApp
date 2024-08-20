@@ -1,0 +1,2297 @@
+{
+ "Resources": {
+  "eczcdkrepoEczPipeline39DCB4CEdevelopmentEventRule5C02AB5A": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "EventPattern": {
+     "source": [
+      "aws.codecommit"
+     ],
+     "resources": [
+      "arn:aws:codecommit:us-west-2:533267166026:ecz-cdk-repo"
+     ],
+     "detail-type": [
+      "CodeCommit Repository State Change"
+     ],
+     "detail": {
+      "event": [
+       "referenceCreated",
+       "referenceUpdated"
+      ],
+      "referenceName": [
+       "development"
+      ]
+     }
+    },
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::Join": [
+        "",
+        [
+         "arn:aws:codepipeline:us-west-2:533267166026:",
+         {
+          "Ref": "EczPipeline838840D1"
+         }
+        ]
+       ]
+      },
+      "Id": "Target0",
+      "RoleArn": {
+       "Fn::GetAtt": [
+        "EczPipelineEventsRoleAF46D9A7",
+        "Arn"
+       ]
+      }
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/ecz-cdk-repo/EczPipeline39DCB4CE-development-EventRule/Resource"
+   }
+  },
+  "EczPipelineArtifactsBucketEncryptionKey14976F87": {
+   "Type": "AWS::KMS::Key",
+   "Properties": {
+    "KeyPolicy": {
+     "Statement": [
+      {
+       "Action": "kms:*",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "arn:aws:iam::533267166026:root"
+       },
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": [
+         {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::533267166026:role/cdk-hnb659fds-deploy-role-533267166026-us-west-2"
+           ]
+          ]
+         },
+         {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::590183895011:role/cdk-hnb659fds-deploy-role-590183895011-us-west-2"
+           ]
+          ]
+         },
+         {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::654654530549:role/cdk-hnb659fds-deploy-role-654654530549-us-west-2"
+           ]
+          ]
+         },
+         {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::654654539034:role/cdk-hnb659fds-deploy-role-654654539034-us-west-2"
+           ]
+          ]
+         }
+        ]
+       },
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/ArtifactsBucketEncryptionKey/Resource"
+   }
+  },
+  "EczPipelineArtifactsBucketEncryptionKeyAlias16B47F21": {
+   "Type": "AWS::KMS::Alias",
+   "Properties": {
+    "AliasName": "alias/codepipeline-eczpipeline-39dcb4ce",
+    "TargetKeyId": {
+     "Fn::GetAtt": [
+      "EczPipelineArtifactsBucketEncryptionKey14976F87",
+      "Arn"
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/ArtifactsBucketEncryptionKeyAlias/Resource"
+   }
+  },
+  "EczPipelineArtifactsBucket72D0712D": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "KMSMasterKeyID": {
+         "Fn::GetAtt": [
+          "EczPipelineArtifactsBucketEncryptionKey14976F87",
+          "Arn"
+         ]
+        },
+        "SSEAlgorithm": "aws:kms"
+       }
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/ArtifactsBucket/Resource"
+   }
+  },
+  "EczPipelineArtifactsBucketPolicy6D3C1245": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "EczPipelineArtifactsBucket72D0712D"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "EczPipelineArtifactsBucket72D0712D",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "EczPipelineArtifactsBucket72D0712D",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": [
+         {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::533267166026:role/cdk-hnb659fds-deploy-role-533267166026-us-west-2"
+           ]
+          ]
+         },
+         {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::590183895011:role/cdk-hnb659fds-deploy-role-590183895011-us-west-2"
+           ]
+          ]
+         },
+         {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::654654530549:role/cdk-hnb659fds-deploy-role-654654530549-us-west-2"
+           ]
+          ]
+         },
+         {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::654654539034:role/cdk-hnb659fds-deploy-role-654654539034-us-west-2"
+           ]
+          ]
+         }
+        ]
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "EczPipelineArtifactsBucket72D0712D",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "EczPipelineArtifactsBucket72D0712D",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/ArtifactsBucket/Policy/Resource"
+   }
+  },
+  "EczPipelineRole7779EA37": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "codepipeline.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/Role/Resource"
+   }
+  },
+  "EczPipelineRoleDefaultPolicy856CD0FB": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:Abort*",
+        "s3:DeleteObject*",
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        "arn:aws:s3:::eczpipeline-support-us-eaeplicationbucket65618b96291e6ed057b6",
+        "arn:aws:s3:::eczpipeline-support-us-eaeplicationbucket65618b96291e6ed057b6/*",
+        {
+         "Fn::GetAtt": [
+          "EczPipelineArtifactsBucket72D0712D",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "EczPipelineArtifactsBucket72D0712D",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:GenerateDataKey*",
+        "kms:ReEncrypt*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        "*",
+        {
+         "Fn::GetAtt": [
+          "EczPipelineArtifactsBucketEncryptionKey14976F87",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "EczPipelineCodeBuildActionRole2C5A002F",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "EczPipelineSourceeczcdkrepoCodePipelineActionRole28BD5B70",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "EczPipelineproddeploymentparallelpromotetoprodCodePipelineActionRoleFE98B3FF",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "EczPipelineqadeploymentparallelpromotetoqaCodePipelineActionRoleDAA75600",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "EczPipelineuatdeploymentparallelpromotetouatCodePipelineActionRole7479F075",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::533267166026:role/cdk-hnb659fds-deploy-role-533267166026-us-east-2"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::533267166026:role/cdk-hnb659fds-deploy-role-533267166026-us-west-2"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::590183895011:role/cdk-hnb659fds-deploy-role-590183895011-us-east-2"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::590183895011:role/cdk-hnb659fds-deploy-role-590183895011-us-west-2"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::654654530549:role/cdk-hnb659fds-deploy-role-654654530549-us-east-2"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::654654530549:role/cdk-hnb659fds-deploy-role-654654530549-us-west-2"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::654654539034:role/cdk-hnb659fds-deploy-role-654654539034-us-east-2"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::654654539034:role/cdk-hnb659fds-deploy-role-654654539034-us-west-2"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EczPipelineRoleDefaultPolicy856CD0FB",
+    "Roles": [
+     {
+      "Ref": "EczPipelineRole7779EA37"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/Role/DefaultPolicy/Resource"
+   }
+  },
+  "EczPipeline838840D1": {
+   "Type": "AWS::CodePipeline::Pipeline",
+   "Properties": {
+    "ArtifactStores": [
+     {
+      "ArtifactStore": {
+       "EncryptionKey": {
+        "Id": "arn:aws:kms:us-east-2:533267166026:alias/rt-us-eatencryptionalias64ccfd1b8077113af050",
+        "Type": "KMS"
+       },
+       "Location": "eczpipeline-support-us-eaeplicationbucket65618b96291e6ed057b6",
+       "Type": "S3"
+      },
+      "Region": "us-east-2"
+     },
+     {
+      "ArtifactStore": {
+       "EncryptionKey": {
+        "Id": {
+         "Fn::GetAtt": [
+          "EczPipelineArtifactsBucketEncryptionKey14976F87",
+          "Arn"
+         ]
+        },
+        "Type": "KMS"
+       },
+       "Location": {
+        "Ref": "EczPipelineArtifactsBucket72D0712D"
+       },
+       "Type": "S3"
+      },
+      "Region": "us-west-2"
+     }
+    ],
+    "Name": "hca-ecz-pipeline",
+    "PipelineType": "V1",
+    "RestartExecutionOnUpdate": true,
+    "RoleArn": {
+     "Fn::GetAtt": [
+      "EczPipelineRole7779EA37",
+      "Arn"
+     ]
+    },
+    "Stages": [
+     {
+      "Actions": [
+       {
+        "ActionTypeId": {
+         "Category": "Source",
+         "Owner": "AWS",
+         "Provider": "CodeCommit",
+         "Version": "1"
+        },
+        "Configuration": {
+         "RepositoryName": "ecz-cdk-repo",
+         "BranchName": "development",
+         "PollForSourceChanges": false
+        },
+        "Name": "ecz-cdk-repo",
+        "OutputArtifacts": [
+         {
+          "Name": "ecz_cdk_repo_Source"
+         }
+        ],
+        "RoleArn": {
+         "Fn::GetAtt": [
+          "EczPipelineSourceeczcdkrepoCodePipelineActionRole28BD5B70",
+          "Arn"
+         ]
+        },
+        "RunOrder": 1
+       }
+      ],
+      "Name": "Source"
+     },
+     {
+      "Actions": [
+       {
+        "ActionTypeId": {
+         "Category": "Build",
+         "Owner": "AWS",
+         "Provider": "CodeBuild",
+         "Version": "1"
+        },
+        "Configuration": {
+         "ProjectName": {
+          "Ref": "EczPipelineBuildSynthCdkBuildProjectEFBA5093"
+         },
+         "EnvironmentVariables": "[{\"name\":\"_PROJECT_CONFIG_HASH\",\"type\":\"PLAINTEXT\",\"value\":\"61128e4d466df2e2b4145c3829a0e68b5dd20cdb400c6614b6886ff6805cda14\"}]"
+        },
+        "InputArtifacts": [
+         {
+          "Name": "ecz_cdk_repo_Source"
+         }
+        ],
+        "Name": "Synth",
+        "OutputArtifacts": [
+         {
+          "Name": "Synth_Output"
+         }
+        ],
+        "RoleArn": {
+         "Fn::GetAtt": [
+          "EczPipelineCodeBuildActionRole2C5A002F",
+          "Arn"
+         ]
+        },
+        "RunOrder": 1
+       }
+      ],
+      "Name": "Build"
+     },
+     {
+      "Actions": [
+       {
+        "ActionTypeId": {
+         "Category": "Build",
+         "Owner": "AWS",
+         "Provider": "CodeBuild",
+         "Version": "1"
+        },
+        "Configuration": {
+         "ProjectName": {
+          "Ref": "EczPipelineUpdatePipelineSelfMutation38785833"
+         },
+         "EnvironmentVariables": "[{\"name\":\"_PROJECT_CONFIG_HASH\",\"type\":\"PLAINTEXT\",\"value\":\"f07f436bf39d8e2b0467863ce5a30cb10015cb1febbbba097f505883b2aa3a3a\"}]"
+        },
+        "InputArtifacts": [
+         {
+          "Name": "Synth_Output"
+         }
+        ],
+        "Name": "SelfMutate",
+        "RoleArn": {
+         "Fn::GetAtt": [
+          "EczPipelineCodeBuildActionRole2C5A002F",
+          "Arn"
+         ]
+        },
+        "RunOrder": 1
+       }
+      ],
+      "Name": "UpdatePipeline"
+     },
+     {
+      "Actions": [
+       {
+        "ActionTypeId": {
+         "Category": "Build",
+         "Owner": "AWS",
+         "Provider": "CodeBuild",
+         "Version": "1"
+        },
+        "Configuration": {
+         "ProjectName": {
+          "Ref": "EczPipelineAssetsFileAsset18CC19A76"
+         }
+        },
+        "InputArtifacts": [
+         {
+          "Name": "Synth_Output"
+         }
+        ],
+        "Name": "FileAsset1",
+        "RoleArn": {
+         "Fn::GetAtt": [
+          "EczPipelineCodeBuildActionRole2C5A002F",
+          "Arn"
+         ]
+        },
+        "RunOrder": 1
+       }
+      ],
+      "Name": "Assets"
+     },
+     {
+      "Actions": [
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "dev-us-west-2-deploy-ocr-api-gateway-stack-us-west-2",
+         "Capabilities": "CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND",
+         "RoleArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::533267166026:role/cdk-hnb659fds-cfn-exec-role-533267166026-us-west-2"
+           ]
+          ]
+         },
+         "ActionMode": "CHANGE_SET_REPLACE",
+         "ChangeSetName": "PipelineChange",
+         "TemplatePath": "Synth_Output::assembly-EczPipeline-dev-us-west-2-deploy/EczPipelinedevuswest2deployocrapigatewaystackuswest2442EE8BE.template.json"
+        },
+        "InputArtifacts": [
+         {
+          "Name": "Synth_Output"
+         }
+        ],
+        "Name": "dev-us-west-2-deploy.ocr-api-gateway-stack-us-west-2.Prepare",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::533267166026:role/cdk-hnb659fds-deploy-role-533267166026-us-west-2"
+          ]
+         ]
+        },
+        "RunOrder": 1
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "dev-us-east-2-deploy-ocr-api-gateway-stack-us-east-2",
+         "Capabilities": "CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND",
+         "RoleArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::533267166026:role/cdk-hnb659fds-cfn-exec-role-533267166026-us-east-2"
+           ]
+          ]
+         },
+         "ActionMode": "CHANGE_SET_REPLACE",
+         "ChangeSetName": "PipelineChange",
+         "TemplatePath": "Synth_Output::assembly-EczPipeline-dev-us-east-2-deploy/EczPipelinedevuseast2deployocrapigatewaystackuseast2E6884499.template.json"
+        },
+        "InputArtifacts": [
+         {
+          "Name": "Synth_Output"
+         }
+        ],
+        "Name": "dev-us-east-2-deploy.ocr-api-gateway-stack-us-east-2.Prepare",
+        "Region": "us-east-2",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::533267166026:role/cdk-hnb659fds-deploy-role-533267166026-us-east-2"
+          ]
+         ]
+        },
+        "RunOrder": 1
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "dev-us-west-2-deploy-ocr-api-gateway-stack-us-west-2",
+         "ActionMode": "CHANGE_SET_EXECUTE",
+         "ChangeSetName": "PipelineChange"
+        },
+        "Name": "dev-us-west-2-deploy.ocr-api-gateway-stack-us-west-2.Deploy",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::533267166026:role/cdk-hnb659fds-deploy-role-533267166026-us-west-2"
+          ]
+         ]
+        },
+        "RunOrder": 2
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "dev-us-east-2-deploy-ocr-api-gateway-stack-us-east-2",
+         "ActionMode": "CHANGE_SET_EXECUTE",
+         "ChangeSetName": "PipelineChange"
+        },
+        "Name": "dev-us-east-2-deploy.ocr-api-gateway-stack-us-east-2.Deploy",
+        "Region": "us-east-2",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::533267166026:role/cdk-hnb659fds-deploy-role-533267166026-us-east-2"
+          ]
+         ]
+        },
+        "RunOrder": 2
+       }
+      ],
+      "Name": "dev-deployment-parallel"
+     },
+     {
+      "Actions": [
+       {
+        "ActionTypeId": {
+         "Category": "Approval",
+         "Owner": "AWS",
+         "Provider": "Manual",
+         "Version": "1"
+        },
+        "Name": "promote-to-qa",
+        "RoleArn": {
+         "Fn::GetAtt": [
+          "EczPipelineqadeploymentparallelpromotetoqaCodePipelineActionRoleDAA75600",
+          "Arn"
+         ]
+        },
+        "RunOrder": 1
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "qa-us-west-2-deploy-ocr-api-gateway-stack-us-west-2",
+         "Capabilities": "CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND",
+         "RoleArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::654654530549:role/cdk-hnb659fds-cfn-exec-role-654654530549-us-west-2"
+           ]
+          ]
+         },
+         "ActionMode": "CHANGE_SET_REPLACE",
+         "ChangeSetName": "PipelineChange",
+         "TemplatePath": "Synth_Output::assembly-EczPipeline-qa-us-west-2-deploy/EczPipelineqauswest2deployocrapigatewaystackuswest25B77BE68.template.json"
+        },
+        "InputArtifacts": [
+         {
+          "Name": "Synth_Output"
+         }
+        ],
+        "Name": "qa-us-west-2-deploy.ocr-api-gateway-stack-us-west-2.Prepare",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::654654530549:role/cdk-hnb659fds-deploy-role-654654530549-us-west-2"
+          ]
+         ]
+        },
+        "RunOrder": 2
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "qa-us-east-2-deploy-ocr-api-gateway-stack-us-east-2",
+         "Capabilities": "CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND",
+         "RoleArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::654654530549:role/cdk-hnb659fds-cfn-exec-role-654654530549-us-east-2"
+           ]
+          ]
+         },
+         "ActionMode": "CHANGE_SET_REPLACE",
+         "ChangeSetName": "PipelineChange",
+         "TemplatePath": "Synth_Output::assembly-EczPipeline-qa-us-east-2-deploy/EczPipelineqauseast2deployocrapigatewaystackuseast21265761A.template.json"
+        },
+        "InputArtifacts": [
+         {
+          "Name": "Synth_Output"
+         }
+        ],
+        "Name": "qa-us-east-2-deploy.ocr-api-gateway-stack-us-east-2.Prepare",
+        "Region": "us-east-2",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::654654530549:role/cdk-hnb659fds-deploy-role-654654530549-us-east-2"
+          ]
+         ]
+        },
+        "RunOrder": 2
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "qa-us-west-2-deploy-ocr-api-gateway-stack-us-west-2",
+         "ActionMode": "CHANGE_SET_EXECUTE",
+         "ChangeSetName": "PipelineChange"
+        },
+        "Name": "qa-us-west-2-deploy.ocr-api-gateway-stack-us-west-2.Deploy",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::654654530549:role/cdk-hnb659fds-deploy-role-654654530549-us-west-2"
+          ]
+         ]
+        },
+        "RunOrder": 3
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "qa-us-east-2-deploy-ocr-api-gateway-stack-us-east-2",
+         "ActionMode": "CHANGE_SET_EXECUTE",
+         "ChangeSetName": "PipelineChange"
+        },
+        "Name": "qa-us-east-2-deploy.ocr-api-gateway-stack-us-east-2.Deploy",
+        "Region": "us-east-2",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::654654530549:role/cdk-hnb659fds-deploy-role-654654530549-us-east-2"
+          ]
+         ]
+        },
+        "RunOrder": 3
+       }
+      ],
+      "Name": "qa-deployment-parallel"
+     },
+     {
+      "Actions": [
+       {
+        "ActionTypeId": {
+         "Category": "Approval",
+         "Owner": "AWS",
+         "Provider": "Manual",
+         "Version": "1"
+        },
+        "Name": "promote-to-uat",
+        "RoleArn": {
+         "Fn::GetAtt": [
+          "EczPipelineuatdeploymentparallelpromotetouatCodePipelineActionRole7479F075",
+          "Arn"
+         ]
+        },
+        "RunOrder": 1
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "uat-us-west-2-deploy-ocr-api-gateway-stack-us-west-2",
+         "Capabilities": "CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND",
+         "RoleArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::590183895011:role/cdk-hnb659fds-cfn-exec-role-590183895011-us-west-2"
+           ]
+          ]
+         },
+         "ActionMode": "CHANGE_SET_REPLACE",
+         "ChangeSetName": "PipelineChange",
+         "TemplatePath": "Synth_Output::assembly-EczPipeline-uat-us-west-2-deploy/EczPipelineuatuswest2deployocrapigatewaystackuswest233AD9742.template.json"
+        },
+        "InputArtifacts": [
+         {
+          "Name": "Synth_Output"
+         }
+        ],
+        "Name": "uat-us-west-2-deploy.ocr-api-gateway-stack-us-west-2.Prepare",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::590183895011:role/cdk-hnb659fds-deploy-role-590183895011-us-west-2"
+          ]
+         ]
+        },
+        "RunOrder": 2
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "uat-us-east-2-deploy-ocr-api-gateway-stack-us-east-2",
+         "Capabilities": "CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND",
+         "RoleArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::590183895011:role/cdk-hnb659fds-cfn-exec-role-590183895011-us-east-2"
+           ]
+          ]
+         },
+         "ActionMode": "CHANGE_SET_REPLACE",
+         "ChangeSetName": "PipelineChange",
+         "TemplatePath": "Synth_Output::assembly-EczPipeline-uat-us-east-2-deploy/EczPipelineuatuseast2deployocrapigatewaystackuseast2B525B6DD.template.json"
+        },
+        "InputArtifacts": [
+         {
+          "Name": "Synth_Output"
+         }
+        ],
+        "Name": "uat-us-east-2-deploy.ocr-api-gateway-stack-us-east-2.Prepare",
+        "Region": "us-east-2",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::590183895011:role/cdk-hnb659fds-deploy-role-590183895011-us-east-2"
+          ]
+         ]
+        },
+        "RunOrder": 2
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "uat-us-west-2-deploy-ocr-api-gateway-stack-us-west-2",
+         "ActionMode": "CHANGE_SET_EXECUTE",
+         "ChangeSetName": "PipelineChange"
+        },
+        "Name": "uat-us-west-2-deploy.ocr-api-gateway-stack-us-west-2.Deploy",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::590183895011:role/cdk-hnb659fds-deploy-role-590183895011-us-west-2"
+          ]
+         ]
+        },
+        "RunOrder": 3
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "uat-us-east-2-deploy-ocr-api-gateway-stack-us-east-2",
+         "ActionMode": "CHANGE_SET_EXECUTE",
+         "ChangeSetName": "PipelineChange"
+        },
+        "Name": "uat-us-east-2-deploy.ocr-api-gateway-stack-us-east-2.Deploy",
+        "Region": "us-east-2",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::590183895011:role/cdk-hnb659fds-deploy-role-590183895011-us-east-2"
+          ]
+         ]
+        },
+        "RunOrder": 3
+       }
+      ],
+      "Name": "uat-deployment-parallel"
+     },
+     {
+      "Actions": [
+       {
+        "ActionTypeId": {
+         "Category": "Approval",
+         "Owner": "AWS",
+         "Provider": "Manual",
+         "Version": "1"
+        },
+        "Name": "promote-to-prod",
+        "RoleArn": {
+         "Fn::GetAtt": [
+          "EczPipelineproddeploymentparallelpromotetoprodCodePipelineActionRoleFE98B3FF",
+          "Arn"
+         ]
+        },
+        "RunOrder": 1
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "prod-us-west-2-deploy-ocr-api-gateway-stack-us-west-2",
+         "Capabilities": "CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND",
+         "RoleArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::654654539034:role/cdk-hnb659fds-cfn-exec-role-654654539034-us-west-2"
+           ]
+          ]
+         },
+         "ActionMode": "CHANGE_SET_REPLACE",
+         "ChangeSetName": "PipelineChange",
+         "TemplatePath": "Synth_Output::assembly-EczPipeline-prod-us-west-2-deploy/EczPipelineproduswest2deployocrapigatewaystackuswest2EBCD8344.template.json"
+        },
+        "InputArtifacts": [
+         {
+          "Name": "Synth_Output"
+         }
+        ],
+        "Name": "prod-us-west-2-deploy.ocr-api-gateway-stack-us-west-2.Prepare",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::654654539034:role/cdk-hnb659fds-deploy-role-654654539034-us-west-2"
+          ]
+         ]
+        },
+        "RunOrder": 2
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "prod-us-east-2-deploy-ocr-api-gateway-stack-us-east-2",
+         "Capabilities": "CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND",
+         "RoleArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::654654539034:role/cdk-hnb659fds-cfn-exec-role-654654539034-us-east-2"
+           ]
+          ]
+         },
+         "ActionMode": "CHANGE_SET_REPLACE",
+         "ChangeSetName": "PipelineChange",
+         "TemplatePath": "Synth_Output::assembly-EczPipeline-prod-us-east-2-deploy/EczPipelineproduseast2deployocrapigatewaystackuseast27AB04BF4.template.json"
+        },
+        "InputArtifacts": [
+         {
+          "Name": "Synth_Output"
+         }
+        ],
+        "Name": "prod-us-east-2-deploy.ocr-api-gateway-stack-us-east-2.Prepare",
+        "Region": "us-east-2",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::654654539034:role/cdk-hnb659fds-deploy-role-654654539034-us-east-2"
+          ]
+         ]
+        },
+        "RunOrder": 2
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "prod-us-west-2-deploy-ocr-api-gateway-stack-us-west-2",
+         "ActionMode": "CHANGE_SET_EXECUTE",
+         "ChangeSetName": "PipelineChange"
+        },
+        "Name": "prod-us-west-2-deploy.ocr-api-gateway-stack-us-west-2.Deploy",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::654654539034:role/cdk-hnb659fds-deploy-role-654654539034-us-west-2"
+          ]
+         ]
+        },
+        "RunOrder": 3
+       },
+       {
+        "ActionTypeId": {
+         "Category": "Deploy",
+         "Owner": "AWS",
+         "Provider": "CloudFormation",
+         "Version": "1"
+        },
+        "Configuration": {
+         "StackName": "prod-us-east-2-deploy-ocr-api-gateway-stack-us-east-2",
+         "ActionMode": "CHANGE_SET_EXECUTE",
+         "ChangeSetName": "PipelineChange"
+        },
+        "Name": "prod-us-east-2-deploy.ocr-api-gateway-stack-us-east-2.Deploy",
+        "Region": "us-east-2",
+        "RoleArn": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::654654539034:role/cdk-hnb659fds-deploy-role-654654539034-us-east-2"
+          ]
+         ]
+        },
+        "RunOrder": 3
+       }
+      ],
+      "Name": "prod-deployment-parallel"
+     }
+    ]
+   },
+   "DependsOn": [
+    "EczPipelineRoleDefaultPolicy856CD0FB",
+    "EczPipelineRole7779EA37"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/Resource"
+   }
+  },
+  "EczPipelineSourceeczcdkrepoCodePipelineActionRole28BD5B70": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "arn:aws:iam::533267166026:root"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/Source/ecz-cdk-repo/CodePipelineActionRole/Resource"
+   }
+  },
+  "EczPipelineSourceeczcdkrepoCodePipelineActionRoleDefaultPolicyC985CC25": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:Abort*",
+        "s3:DeleteObject*",
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "EczPipelineArtifactsBucket72D0712D",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "EczPipelineArtifactsBucket72D0712D",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:GenerateDataKey*",
+        "kms:ReEncrypt*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EczPipelineArtifactsBucketEncryptionKey14976F87",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "codecommit:CancelUploadArchive",
+        "codecommit:GetBranch",
+        "codecommit:GetCommit",
+        "codecommit:GetUploadArchiveStatus",
+        "codecommit:UploadArchive"
+       ],
+       "Effect": "Allow",
+       "Resource": "arn:aws:codecommit:us-west-2:533267166026:ecz-cdk-repo"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EczPipelineSourceeczcdkrepoCodePipelineActionRoleDefaultPolicyC985CC25",
+    "Roles": [
+     {
+      "Ref": "EczPipelineSourceeczcdkrepoCodePipelineActionRole28BD5B70"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/Source/ecz-cdk-repo/CodePipelineActionRole/DefaultPolicy/Resource"
+   }
+  },
+  "EczPipelineEventsRoleAF46D9A7": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "events.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/EventsRole/Resource"
+   }
+  },
+  "EczPipelineEventsRoleDefaultPolicyA046B93B": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "codepipeline:StartPipelineExecution",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:aws:codepipeline:us-west-2:533267166026:",
+          {
+           "Ref": "EczPipeline838840D1"
+          }
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EczPipelineEventsRoleDefaultPolicyA046B93B",
+    "Roles": [
+     {
+      "Ref": "EczPipelineEventsRoleAF46D9A7"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/EventsRole/DefaultPolicy/Resource"
+   }
+  },
+  "EczPipelineBuildSynthCdkBuildProjectRoleA434D326": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "codebuild.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/Resource"
+   }
+  },
+  "EczPipelineBuildSynthCdkBuildProjectRoleDefaultPolicy167392DB": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:aws:logs:us-west-2:533267166026:log-group:/aws/codebuild/",
+           {
+            "Ref": "EczPipelineBuildSynthCdkBuildProjectEFBA5093"
+           },
+           ":*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:aws:logs:us-west-2:533267166026:log-group:/aws/codebuild/",
+           {
+            "Ref": "EczPipelineBuildSynthCdkBuildProjectEFBA5093"
+           }
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "codebuild:BatchPutCodeCoverages",
+        "codebuild:BatchPutTestCases",
+        "codebuild:CreateReport",
+        "codebuild:CreateReportGroup",
+        "codebuild:UpdateReport"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:aws:codebuild:us-west-2:533267166026:report-group/",
+          {
+           "Ref": "EczPipelineBuildSynthCdkBuildProjectEFBA5093"
+          },
+          "-*"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": [
+        "arn:aws:secretsmanager:us-west-2:533267166026:secret:dev/sonar/sonar_token-QHMEZo",
+        "arn:aws:secretsmanager:us-west-2:533267166026:secret:dev/sonar/url-cwvrqw"
+       ]
+      },
+      {
+       "Action": [
+        "s3:Abort*",
+        "s3:DeleteObject*",
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "EczPipelineArtifactsBucket72D0712D",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "EczPipelineArtifactsBucket72D0712D",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:GenerateDataKey*",
+        "kms:ReEncrypt*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EczPipelineArtifactsBucketEncryptionKey14976F87",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EczPipelineBuildSynthCdkBuildProjectRoleDefaultPolicy167392DB",
+    "Roles": [
+     {
+      "Ref": "EczPipelineBuildSynthCdkBuildProjectRoleA434D326"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/DefaultPolicy/Resource"
+   }
+  },
+  "EczPipelineBuildSynthCdkBuildProjectEFBA5093": {
+   "Type": "AWS::CodeBuild::Project",
+   "Properties": {
+    "Artifacts": {
+     "Type": "CODEPIPELINE"
+    },
+    "Cache": {
+     "Type": "NO_CACHE"
+    },
+    "Description": "Pipeline step EczPipeline/Pipeline/Build/Synth",
+    "EncryptionKey": {
+     "Fn::GetAtt": [
+      "EczPipelineArtifactsBucketEncryptionKey14976F87",
+      "Arn"
+     ]
+    },
+    "Environment": {
+     "ComputeType": "BUILD_GENERAL1_SMALL",
+     "Image": "aws/codebuild/standard:7.0",
+     "ImagePullCredentialsType": "CODEBUILD",
+     "PrivilegedMode": false,
+     "Type": "LINUX_CONTAINER"
+    },
+    "ServiceRole": {
+     "Fn::GetAtt": [
+      "EczPipelineBuildSynthCdkBuildProjectRoleA434D326",
+      "Arn"
+     ]
+    },
+    "Source": {
+     "BuildSpec": "{\n  \"version\": \"0.2\",\n  \"phases\": {\n    \"build\": {\n      \"commands\": [\n        \"npm install -g aws-cdk@2\",\n        \"pip install -r requirements.txt\",\n        \"export SONAR_SCANNER_VERSION=4.7.0.2747\",\n        \"export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux\",\n        \"curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip\",\n        \"unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/\",\n        \"export PATH=$SONAR_SCANNER_HOME/bin:$PATH\",\n        \"SONAR_TOKEN=$(aws secretsmanager get-secret-value --secret-id dev/sonar/sonar_token --query SecretString --output text | jq -r .SONAR_TOKEN)\",\n        \"SONAR_URL=$(aws secretsmanager get-secret-value --secret-id dev/sonar/url --query SecretString --output text | jq -r .URL)\",\n        \"echo \\\"Running sonar-scan\\\"\",\n        \"sonar-scanner -Dsonar.projectKey=Hca-ocr-sonar -Dsonar.sources=. -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_TOKEN -Dsonar.qualitygate.wait=true\",\n        \"echo \\\"Deploying application using AWS CDK\\\"\",\n        \"cdk synth\"\n      ]\n    }\n  },\n  \"artifacts\": {\n    \"base-directory\": \"cdk.out\",\n    \"files\": \"**/*\"\n  }\n}",
+     "Type": "CODEPIPELINE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/Build/Synth/CdkBuildProject/Resource"
+   }
+  },
+  "EczPipelineqadeploymentparallelpromotetoqaCodePipelineActionRoleDAA75600": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "arn:aws:iam::533267166026:root"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/qa-deployment-parallel/promote-to-qa/CodePipelineActionRole/Resource"
+   }
+  },
+  "EczPipelineuatdeploymentparallelpromotetouatCodePipelineActionRole7479F075": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "arn:aws:iam::533267166026:root"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/uat-deployment-parallel/promote-to-uat/CodePipelineActionRole/Resource"
+   }
+  },
+  "EczPipelineproddeploymentparallelpromotetoprodCodePipelineActionRoleFE98B3FF": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "arn:aws:iam::533267166026:root"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Pipeline/prod-deployment-parallel/promote-to-prod/CodePipelineActionRole/Resource"
+   }
+  },
+  "EczPipelineCodeBuildActionRole2C5A002F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::GetAtt": [
+          "EczPipelineRole7779EA37",
+          "Arn"
+         ]
+        }
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/CodeBuildActionRole/Resource"
+   }
+  },
+  "EczPipelineCodeBuildActionRoleDefaultPolicy9FD4003E": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "codebuild:BatchGetBuilds",
+        "codebuild:StartBuild",
+        "codebuild:StopBuild"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "EczPipelineAssetsFileAsset18CC19A76",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "EczPipelineBuildSynthCdkBuildProjectEFBA5093",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "EczPipelineUpdatePipelineSelfMutation38785833",
+          "Arn"
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EczPipelineCodeBuildActionRoleDefaultPolicy9FD4003E",
+    "Roles": [
+     {
+      "Ref": "EczPipelineCodeBuildActionRole2C5A002F"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/CodeBuildActionRole/DefaultPolicy/Resource"
+   }
+  },
+  "EczPipelineUpdatePipelineSelfMutationRoleF8EB5939": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "codebuild.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/UpdatePipeline/SelfMutation/Role/Resource"
+   }
+  },
+  "EczPipelineUpdatePipelineSelfMutationRoleDefaultPolicy6FE990DF": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:aws:logs:us-west-2:533267166026:log-group:/aws/codebuild/",
+           {
+            "Ref": "EczPipelineUpdatePipelineSelfMutation38785833"
+           },
+           ":*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:aws:logs:us-west-2:533267166026:log-group:/aws/codebuild/",
+           {
+            "Ref": "EczPipelineUpdatePipelineSelfMutation38785833"
+           }
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "codebuild:BatchPutCodeCoverages",
+        "codebuild:BatchPutTestCases",
+        "codebuild:CreateReport",
+        "codebuild:CreateReportGroup",
+        "codebuild:UpdateReport"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:aws:codebuild:us-west-2:533267166026:report-group/",
+          {
+           "Ref": "EczPipelineUpdatePipelineSelfMutation38785833"
+          },
+          "-*"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": "sts:AssumeRole",
+       "Condition": {
+        "ForAnyValue:StringEquals": {
+         "iam:ResourceTag/aws-cdk:bootstrap-role": [
+          "image-publishing",
+          "file-publishing",
+          "deploy"
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Resource": "arn:*:iam::533267166026:role/*"
+      },
+      {
+       "Action": [
+        "cloudformation:DescribeStacks",
+        "s3:ListBucket"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "EczPipelineArtifactsBucket72D0712D",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "EczPipelineArtifactsBucket72D0712D",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:GenerateDataKey*",
+        "kms:ReEncrypt*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EczPipelineArtifactsBucketEncryptionKey14976F87",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EczPipelineUpdatePipelineSelfMutationRoleDefaultPolicy6FE990DF",
+    "Roles": [
+     {
+      "Ref": "EczPipelineUpdatePipelineSelfMutationRoleF8EB5939"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/UpdatePipeline/SelfMutation/Role/DefaultPolicy/Resource"
+   }
+  },
+  "EczPipelineUpdatePipelineSelfMutation38785833": {
+   "Type": "AWS::CodeBuild::Project",
+   "Properties": {
+    "Artifacts": {
+     "Type": "CODEPIPELINE"
+    },
+    "Cache": {
+     "Type": "NO_CACHE"
+    },
+    "Description": "Pipeline step EczPipeline/Pipeline/UpdatePipeline/SelfMutate",
+    "EncryptionKey": {
+     "Fn::GetAtt": [
+      "EczPipelineArtifactsBucketEncryptionKey14976F87",
+      "Arn"
+     ]
+    },
+    "Environment": {
+     "ComputeType": "BUILD_GENERAL1_SMALL",
+     "Image": "aws/codebuild/standard:7.0",
+     "ImagePullCredentialsType": "CODEBUILD",
+     "PrivilegedMode": false,
+     "Type": "LINUX_CONTAINER"
+    },
+    "Name": "hca-ecz-pipeline-selfupdate",
+    "ServiceRole": {
+     "Fn::GetAtt": [
+      "EczPipelineUpdatePipelineSelfMutationRoleF8EB5939",
+      "Arn"
+     ]
+    },
+    "Source": {
+     "BuildSpec": "{\n  \"version\": \"0.2\",\n  \"phases\": {\n    \"install\": {\n      \"commands\": [\n        \"npm install -g aws-cdk@2\"\n      ]\n    },\n    \"build\": {\n      \"commands\": [\n        \"cdk -a . deploy EczPipeline --require-approval=never --verbose\"\n      ]\n    }\n  }\n}",
+     "Type": "CODEPIPELINE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/UpdatePipeline/SelfMutation/Resource"
+   }
+  },
+  "EczPipelineAssetsFileRole0896D660": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "codebuild.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Assets/FileRole/Resource"
+   }
+  },
+  "EczPipelineAssetsFileRoleDefaultPolicy5657BF72": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": "arn:aws:logs:us-west-2:533267166026:log-group:/aws/codebuild/*"
+      },
+      {
+       "Action": [
+        "codebuild:BatchPutCodeCoverages",
+        "codebuild:BatchPutTestCases",
+        "codebuild:CreateReport",
+        "codebuild:CreateReportGroup",
+        "codebuild:UpdateReport"
+       ],
+       "Effect": "Allow",
+       "Resource": "arn:aws:codebuild:us-west-2:533267166026:report-group/*"
+      },
+      {
+       "Action": [
+        "codebuild:BatchGetBuilds",
+        "codebuild:StartBuild",
+        "codebuild:StopBuild"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Sub": "arn:${AWS::Partition}:iam::533267166026:role/cdk-hnb659fds-file-publishing-role-533267166026-us-east-2"
+        },
+        {
+         "Fn::Sub": "arn:${AWS::Partition}:iam::533267166026:role/cdk-hnb659fds-file-publishing-role-533267166026-us-west-2"
+        },
+        {
+         "Fn::Sub": "arn:${AWS::Partition}:iam::590183895011:role/cdk-hnb659fds-file-publishing-role-590183895011-us-east-2"
+        },
+        {
+         "Fn::Sub": "arn:${AWS::Partition}:iam::590183895011:role/cdk-hnb659fds-file-publishing-role-590183895011-us-west-2"
+        },
+        {
+         "Fn::Sub": "arn:${AWS::Partition}:iam::654654530549:role/cdk-hnb659fds-file-publishing-role-654654530549-us-east-2"
+        },
+        {
+         "Fn::Sub": "arn:${AWS::Partition}:iam::654654530549:role/cdk-hnb659fds-file-publishing-role-654654530549-us-west-2"
+        },
+        {
+         "Fn::Sub": "arn:${AWS::Partition}:iam::654654539034:role/cdk-hnb659fds-file-publishing-role-654654539034-us-east-2"
+        },
+        {
+         "Fn::Sub": "arn:${AWS::Partition}:iam::654654539034:role/cdk-hnb659fds-file-publishing-role-654654539034-us-west-2"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "EczPipelineArtifactsBucket72D0712D",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "EczPipelineArtifactsBucket72D0712D",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EczPipelineArtifactsBucketEncryptionKey14976F87",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EczPipelineAssetsFileRoleDefaultPolicy5657BF72",
+    "Roles": [
+     {
+      "Ref": "EczPipelineAssetsFileRole0896D660"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Assets/FileRole/DefaultPolicy/Resource"
+   }
+  },
+  "EczPipelineAssetsFileAsset18CC19A76": {
+   "Type": "AWS::CodeBuild::Project",
+   "Properties": {
+    "Artifacts": {
+     "Type": "CODEPIPELINE"
+    },
+    "Cache": {
+     "Type": "NO_CACHE"
+    },
+    "Description": "Pipeline step EczPipeline/Pipeline/Assets/FileAsset1",
+    "EncryptionKey": {
+     "Fn::GetAtt": [
+      "EczPipelineArtifactsBucketEncryptionKey14976F87",
+      "Arn"
+     ]
+    },
+    "Environment": {
+     "ComputeType": "BUILD_GENERAL1_SMALL",
+     "Image": "aws/codebuild/standard:7.0",
+     "ImagePullCredentialsType": "CODEBUILD",
+     "PrivilegedMode": false,
+     "Type": "LINUX_CONTAINER"
+    },
+    "ServiceRole": {
+     "Fn::GetAtt": [
+      "EczPipelineAssetsFileRole0896D660",
+      "Arn"
+     ]
+    },
+    "Source": {
+     "BuildSpec": "{\n  \"version\": \"0.2\",\n  \"phases\": {\n    \"install\": {\n      \"commands\": [\n        \"npm install -g cdk-assets@2\"\n      ]\n    },\n    \"build\": {\n      \"commands\": [\n        \"cdk-assets --path \\\"assembly-EczPipeline-dev-us-west-2-deploy/EczPipelinedevuswest2deployocrapigatewaystackuswest2442EE8BE.assets.json\\\" --verbose publish \\\"56fa70fb76952897a145a2f9d4ef7a2193319b0e3886cb4850f6d0bd4824dd39:533267166026-us-west-2\\\"\",\n        \"cdk-assets --path \\\"assembly-EczPipeline-dev-us-east-2-deploy/EczPipelinedevuseast2deployocrapigatewaystackuseast2E6884499.assets.json\\\" --verbose publish \\\"56fa70fb76952897a145a2f9d4ef7a2193319b0e3886cb4850f6d0bd4824dd39:533267166026-us-east-2\\\"\",\n        \"cdk-assets --path \\\"assembly-EczPipeline-qa-us-west-2-deploy/EczPipelineqauswest2deployocrapigatewaystackuswest25B77BE68.assets.json\\\" --verbose publish \\\"56fa70fb76952897a145a2f9d4ef7a2193319b0e3886cb4850f6d0bd4824dd39:654654530549-us-west-2\\\"\",\n        \"cdk-assets --path \\\"assembly-EczPipeline-qa-us-east-2-deploy/EczPipelineqauseast2deployocrapigatewaystackuseast21265761A.assets.json\\\" --verbose publish \\\"56fa70fb76952897a145a2f9d4ef7a2193319b0e3886cb4850f6d0bd4824dd39:654654530549-us-east-2\\\"\",\n        \"cdk-assets --path \\\"assembly-EczPipeline-uat-us-west-2-deploy/EczPipelineuatuswest2deployocrapigatewaystackuswest233AD9742.assets.json\\\" --verbose publish \\\"56fa70fb76952897a145a2f9d4ef7a2193319b0e3886cb4850f6d0bd4824dd39:590183895011-us-west-2\\\"\",\n        \"cdk-assets --path \\\"assembly-EczPipeline-uat-us-east-2-deploy/EczPipelineuatuseast2deployocrapigatewaystackuseast2B525B6DD.assets.json\\\" --verbose publish \\\"56fa70fb76952897a145a2f9d4ef7a2193319b0e3886cb4850f6d0bd4824dd39:590183895011-us-east-2\\\"\",\n        \"cdk-assets --path \\\"assembly-EczPipeline-prod-us-west-2-deploy/EczPipelineproduswest2deployocrapigatewaystackuswest2EBCD8344.assets.json\\\" --verbose publish \\\"56fa70fb76952897a145a2f9d4ef7a2193319b0e3886cb4850f6d0bd4824dd39:654654539034-us-west-2\\\"\",\n        \"cdk-assets --path \\\"assembly-EczPipeline-prod-us-east-2-deploy/EczPipelineproduseast2deployocrapigatewaystackuseast27AB04BF4.assets.json\\\" --verbose publish \\\"56fa70fb76952897a145a2f9d4ef7a2193319b0e3886cb4850f6d0bd4824dd39:654654539034-us-east-2\\\"\"\n      ]\n    }\n  }\n}",
+     "Type": "CODEPIPELINE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/EczPipeline/Assets/FileAsset1/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02Qyw7CIBBFv8X9dHwu3KpLN039AIN0jGMpmA5oGsK/G2ybujpnLpNwYYPr3R5XC/WRQtdNYfiG8eKVbqAicaHTBOoj10hvsl4wVsEQnO42M4F2Nb34RYYtYSxHy+eTJ2hawXimPqcZB8NK8vCTBLLFeAy6IZ/D0QaUzrDu53iYE7BqMVZubJI5b047udotsKnnXmXnnqR/14yaEkz1BU+upv8nTB+QoOz9w9nlFtcb3C2ewlx0wXpuCauBXyXPC19IAQAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EczPipeline/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

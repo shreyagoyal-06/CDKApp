@@ -1,0 +1,34 @@
+{
+  "version": "36.0.0",
+  "files": {
+    "56fa70fb76952897a145a2f9d4ef7a2193319b0e3886cb4850f6d0bd4824dd39": {
+      "source": {
+        "path": "..\\asset.56fa70fb76952897a145a2f9d4ef7a2193319b0e3886cb4850f6d0bd4824dd39",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "590183895011-us-west-2": {
+          "bucketName": "cdk-hnb659fds-assets-590183895011-us-west-2",
+          "objectKey": "56fa70fb76952897a145a2f9d4ef7a2193319b0e3886cb4850f6d0bd4824dd39.zip",
+          "region": "us-west-2",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::590183895011:role/cdk-hnb659fds-file-publishing-role-590183895011-us-west-2"
+        }
+      }
+    },
+    "37fe55caa530e700ad631bbf1d89d02900075db0bc4134a139a2a497b87368e4": {
+      "source": {
+        "path": "EczPipelineuatuswest2deployocrapigatewaystackuswest233AD9742.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "590183895011-us-west-2": {
+          "bucketName": "cdk-hnb659fds-assets-590183895011-us-west-2",
+          "objectKey": "37fe55caa530e700ad631bbf1d89d02900075db0bc4134a139a2a497b87368e4.json",
+          "region": "us-west-2",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::590183895011:role/cdk-hnb659fds-file-publishing-role-590183895011-us-west-2"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
