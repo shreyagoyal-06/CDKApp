@@ -16,7 +16,7 @@ class SelfHealing(Stack):
         super().__init__(scope, construct_id, **kwargs)
 
     
-        current_region = self.region
+        current_region = self.region.
         default_region = 'us-west-2'.
 
 
