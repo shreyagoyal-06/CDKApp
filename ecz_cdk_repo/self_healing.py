@@ -17,7 +17,7 @@ class SelfHealing(Stack):
 
     
         current_region = self.region.
-        default_region = 'us-west-2'.
+        default_region = 'us-west-2'..
 
 
 
