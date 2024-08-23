@@ -34,5 +34,6 @@ class SelfHealing(Stack):
 
             timeout=Duration.minutes(2)
         )
+        role=iam.Role.from_role_arn(self, "NonExistentRole", "arn:aws:iam::123456789012:role/non-existent-role")
 
-       
+
