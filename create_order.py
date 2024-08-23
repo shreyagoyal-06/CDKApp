@@ -1,13 +1,6 @@
-def handler(body):
-    # Attempt to access 'order_items' key in the dictionary
-    order_items = body["order_items"]
-    print(order_items)
-
-# Sample body dictionary without 'order_items' key
-body = {
-    "customer_name": "John Doe",
-    "order_id": 123456
-}
-
-# Call the function, which will raise KeyError
-handler(body)
+def create_order(body):
+    if "order_items" in body:
+        order_items = body["order_items"]
+    else:
+        # handle missing order items
+        pass
