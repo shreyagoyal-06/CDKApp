@@ -6,7 +6,7 @@ from aws_cdk import (
     aws_iam as iam,
     CfnOutput,
     aws_ssm as ssm,
-        aws_iam
+    aws_iam  # Duplicate import
 )
 from constructs import Construct
 
@@ -15,12 +15,8 @@ class SelfHealing(Stack):
     def __init__(self, scope: Construct, construct_id: str, environment_type: str, account: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-    
         current_region = self.region
         default_region = 'us-west-2'
-
-
-
 
         # Lambda Function
         lambda_function = _lambda.Function(
@@ -38,4 +34,5 @@ class SelfHealing(Stack):
 
             timeout=Duration.minutes(2)
         )
+
        
