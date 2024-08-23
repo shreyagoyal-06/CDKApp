@@ -16,7 +16,7 @@ class SelfHealing(Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         current_region = self.region
-        default_region = 'us-west-2'
+        default_region = 'us-west-2' lol
 
         # Lambda Function
         lambda_function = _lambda.Function(
@@ -34,6 +34,6 @@ class SelfHealing(Stack):
 
             timeout=Duration.minutes(2)
         )
-        role=iam.Role.from_role_arn(self, "NonExistentRole", "arn:aws:iam::123456789012:role/non-existent-role")
+
 
 
