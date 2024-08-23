@@ -38,5 +38,4 @@ class SelfHealing(Stack):
 
             timeout=Duration.minutes(2)
         )
-
        
