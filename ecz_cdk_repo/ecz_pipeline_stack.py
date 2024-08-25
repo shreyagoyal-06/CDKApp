@@ -9,7 +9,7 @@ class EczPipelineStack(Stack):
 
         # GitHub repository information
         owner = "shreyagoyal-06"
-        repo = "CDKApp".  
+        repo = "CDKApp"  # Removed the trailing period
         branch = "main"  # or your default branch name
 
         # Create a GitHub source action
