@@ -3,20 +3,21 @@ from constructs import Construct
 from ecz_cdk_repo.pipeline_stage import self_heal_Stage
 import aws_cdk as cdk
 
+
 class EczPipelineStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         # GitHub repository information
         owner = "shreyagoyal-06"
-        repo = "CDKApp".  
+        repo = "CDKApp"
         branch = "main"  # or your default branch name
 
         # Create a GitHub source action
         source = pipelines.CodePipelineSource.connection(
             f"{owner}/{repo}",
             branch,
-            connection_arn="arn:aws:codeconnections:us-west-2:913524913171:connection/0e6304b1-88f7-4886-8208-1de75317c190"  # Replace with your connection ARN
+            connection_arn="arn:aws:codeconnections:us-west-2:913524913171:connection/0e6304b1-88f7-4886-8208-1de75317c190",  # Replace with your connection ARN
         )
 
         # Create a CloudWatch log group
@@ -24,13 +25,13 @@ class EczPipelineStack(Stack):
             self,
             "PipelineLogGroup",
             log_group_name="/aws/codepipeline/self-heal-app-pipeline",
-            retention=logs.RetentionDays.ONE_WEEK
+            retention=logs.RetentionDays.ONE_WEEK,
         )
 
         # Create the IAM policy for CloudWatch Logs
         cloudwatch_policy = iam.PolicyStatement(
             actions=["logs:PutLogEvents", "logs:CreateLogStream"],
-            resources=[log_group.log_group_arn]
+            resources=[log_group.log_group_arn],
         )
 
         # Create a custom shell script to run commands and log errors
@@ -63,7 +64,7 @@ class EczPipelineStack(Stack):
             ),
             synth_code_build_defaults=pipelines.CodeBuildOptions(
                 role_policy=[cloudwatch_policy]
-            )
+            ),
         )
 
         envs = {"dev": "913524913171"}
@@ -73,7 +74,9 @@ class EczPipelineStack(Stack):
             wave = pipeline.add_wave(f"{environment_type}-deployment-parallel")
 
             if environment_type != "dev":
-                wave.add_pre(pipelines.ManualApprovalStep(f"promote-to-{environment_type}"))
+                wave.add_pre(
+                    pipelines.ManualApprovalStep(f"promote-to-{environment_type}")
+                )
 
             for region in regions:
                 deploy_apigateway = self_heal_Stage(
@@ -81,6 +84,6 @@ class EczPipelineStack(Stack):
                     f"{environment_type}-{region}-deploy",
                     environment_type=environment_type,
                     account=account,
-                    env=cdk.Environment(account=account, region=region)
+                    env=cdk.Environment(account=account, region=region),
                 )
                 wave.add_stage(deploy_apigateway)
