@@ -19,7 +19,7 @@ class EczPipelineStack(Stack):
             connection_arn="arn:aws:codeconnections:us-west-2:913524913171:connection/0e6304b1-88f7-4886-8208-1de75317c190"  # Replace with your connection ARN
         )
 
-         Create a CloudWatch log group
+        # Create a CloudWatch log group
         log_group = logs.LogGroup(
             self,
             "PipelineLogGroup",
